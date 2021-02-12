@@ -72,7 +72,7 @@ router.delete("/:id", async (req, res) => {
         const deleteAction = await Actions.remove(id);
         res.status(200).json(deleteAction);
     } catch (error) {
-        res.status(500).json({message: "Error deleting the action"});
+        res.status(404).json({message: "Error deleting the action"});
     }
 });
 
