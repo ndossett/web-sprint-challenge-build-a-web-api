@@ -2,10 +2,10 @@ const Projects = require("../projects/projects-model");
 
 const checkProjectId = async (req, res, next) => {
     const { id } = req.params;
+    const project = await Projects.get(id);
     try {
-        const project = await Projects.get(id);
         if(!project){
-            res.status(400).json({message: `No project with id: ${id}`})
+            res.status(404).json({message: `No project with id: ${id} found`})
         } else {
             req.project = project
             next()
@@ -15,4 +15,4 @@ const checkProjectId = async (req, res, next) => {
     }
 };
 
-module.exports = checkProjectId;
+module.exports = {checkProjectId};

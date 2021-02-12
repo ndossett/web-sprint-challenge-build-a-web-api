@@ -2,6 +2,7 @@
 const express = require("express");
 
 const Actions = require("./actions-model");
+const mw = require("../middleware/middleware");
 
 const router = express.Router();
 
@@ -29,7 +30,7 @@ router.get("/:id", async (req, res) => {
     }
 })
 
-router.post("/", async (req, res) => {
+router.post("/", mw.checkProjectId, async (req, res) => {
     //return newly created action
     const { project_id, description, notes } = req.body
     try {
@@ -44,7 +45,7 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", mw.checkProjectId, async (req, res) => {
     //return updated action
     const { id } = req.params;
     const { project_id, description, notes } = req.body
@@ -65,6 +66,9 @@ router.delete("/:id", async (req, res) => {
     //delete action - no body response
     const { id } = req.params;
     try {
+        if(!id){
+            res.status(404).json({message:`Action with id: ${id} not found`})
+        }
         const deleteAction = await Actions.remove(id);
         res.status(200).json(deleteAction);
     } catch (error) {
