@@ -2,7 +2,7 @@
 const express = require("express");
 
 const Projects = require("./projects-model");
-// const mw = require("./middleware/middlewares");
+const mw = require("../middleware/middleware");
 
 const router = express.Router();
 
@@ -16,14 +16,11 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", mw.checkProjectId, async (req, res) => {
     //return a project with given ID
     const { id } = req.params;
     try {
         const projects = await Projects.get(id);
-        if(!projects){
-            res.status(404).json({message:`Project with id: ${id} not found`})
-        }
         res.status(200).json(projects)
     } catch (error) {
         res.status(500).json({message: "Error retrieving the project"})
@@ -45,12 +42,12 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", mw.checkProjectId, async (req, res) => {
     //return updated project
     const { id } = req.params;
     const { name, description } = req.body;
     try {
-        if(!name || !description){
+        if(!name && !description){
             res.status(400).json({message: 'Name and descripton are required'});
         } else {
             const project = await Projects.update(id, req.body);
@@ -61,25 +58,22 @@ router.put("/:id", async (req, res) => {
     }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", mw.checkProjectId, async (req, res) => {
     //delete project - no body response
     const { id } = req.params;
     try {
-        const deleteProject = await Projects.remove(id);
-        res.status(200).json(deleteProject);
+            const deleteProject = await Projects.remove(id);
+            res.status(200).json(deleteProject);
     } catch (error) {
         res.status(500).json({message: "Error deleting the project"});
     }
 });
 
-router.get("/:id/actions", async (req, res) => {
+router.get("/:id/actions", mw.checkProjectId, async (req, res) => {
     //return a actions for the given project ID
     const { projectId } = req.params;
     try {
         const projectActions = await Projects.getProjectActions(projectId);
-        if(!projectActions){
-            res.status(404).json({message:`Project with id: ${projectId} not found`})
-        }
         res.status(200).json(projectActions)
     } catch (error) {
         res.status(500).json({message: "Error retrieving the project actions"})
