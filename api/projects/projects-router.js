@@ -47,7 +47,7 @@ router.put("/:id", mw.checkProjectId, async (req, res) => {
     const { id } = req.params;
     const { name, description } = req.body;
     try {
-        if(!name && !description){
+        if(!name || !description){
             res.status(400).json({message: 'Name and descripton are required'});
         } else {
             const project = await Projects.update(id, req.body);
@@ -65,15 +65,16 @@ router.delete("/:id", mw.checkProjectId, async (req, res) => {
             const deleteProject = await Projects.remove(id);
             res.status(200).json(deleteProject);
     } catch (error) {
-        res.status(500).json({message: "Error deleting the project"});
+        res.status(404).json({message: "Error deleting the project"});
     }
 });
 
 router.get("/:id/actions", mw.checkProjectId, async (req, res) => {
     //return a actions for the given project ID
-    const { projectId } = req.params;
+    const { id } = req.params;
+    console.log(id)
     try {
-        const projectActions = await Projects.getProjectActions(projectId);
+        const projectActions = await Projects.getProjectActions(id);
         res.status(200).json(projectActions)
     } catch (error) {
         res.status(500).json({message: "Error retrieving the project actions"})
