@@ -16,6 +16,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
+    //return an action with given ID
     const { id } = req.params;
     try {
         const actions = await Actions.get(id);
@@ -24,11 +25,12 @@ router.get("/:id", async (req, res) => {
         }
         res.status(200).json(actions)
     } catch (error) {
-        res.status(500).json({message: "Error retrieving the actions"})
+        res.status(500).json({message: "Error retrieving the action"})
     }
 })
 
 router.post("/", async (req, res) => {
+    //return newly created action
     const { project_id, description, notes } = req.body
     try {
         if(!project_id || !description || !notes){
@@ -43,6 +45,7 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
+    //return updated action
     const { id } = req.params;
     const { project_id, description, notes } = req.body
 
@@ -59,6 +62,7 @@ router.put("/:id", async (req, res) => {
 });
 
 router.delete("/:id", async (req, res) => {
+    //delete action - no body response
     const { id } = req.params;
     try {
         const deleteAction = await Actions.remove(id);
